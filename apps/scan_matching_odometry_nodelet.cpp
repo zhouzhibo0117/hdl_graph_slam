@@ -164,6 +164,7 @@ private:
     Eigen::Matrix4f trans = registration->getFinalTransformation();
     Eigen::Matrix4f odom = keyframe_pose * trans;
 
+    /** 对最新的位姿变换做阈值限定 */
     if(transform_thresholding) {
       Eigen::Matrix4f delta = prev_trans.inverse() * trans;
       double dx = delta.block<3, 1>(0, 3).norm();
@@ -184,6 +185,8 @@ private:
     double delta_trans = trans.block<3, 1>(0, 3).norm();
     double delta_angle = std::acos(Eigen::Quaternionf(trans.block<3, 3>(0, 0)).w());
     double delta_time = (stamp - keyframe_stamp).toSec();
+    
+    /** 更新关键帧的限定条件 */
     if(delta_trans > keyframe_delta_trans || delta_angle > keyframe_delta_angle || delta_time > keyframe_delta_time) {
       keyframe = filtered;
       registration->setInputTarget(keyframe);

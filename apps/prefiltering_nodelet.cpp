@@ -109,8 +109,11 @@ private:
       src_cloud = transformed;
     }
 
+    /** 基于距离的滤波 */
     pcl::PointCloud<PointT>::ConstPtr filtered = distance_filter(src_cloud);
+    /** 降采样滤波 */
     filtered = downsample(filtered);
+    /** 去除外点 */
     filtered = outlier_removal(filtered);
 
     points_pub.publish(filtered);
